@@ -30,7 +30,8 @@ public class TodoItem implements Comparable<TodoItem>, Serializable{
 
 	@Override
 	public int compareTo(TodoItem another) {
-		if (dueTo == null) return 1;
+		if (dueTo == null ) return 1;
+		if (another.dueTo == null) return -1;
 		return(dueTo.compareTo(another.dueTo));
 	}
 	

@@ -30,11 +30,11 @@ public class AddNewTodoItemActivity extends Activity {
 		Button ok = (Button) findViewById(R.id.btnOK);
 		ok.setOnClickListener(new OnClickListener() {
 			
+			@SuppressWarnings("deprecation")
 			@Override
 			public void onClick(View v) {
 				EditText titleView = (EditText) findViewById(R.id.edtNewItem);
 				DatePicker dateView = (DatePicker) findViewById(R.id.datePicker);
-				@SuppressWarnings("deprecation")
 				Intent res = new Intent();
 				res.putExtra("dueDate", new Date(dateView.getYear() - 1900, dateView.getMonth(), dateView.getDayOfMonth()));
 				res.putExtra("title", titleView.getText().toString());

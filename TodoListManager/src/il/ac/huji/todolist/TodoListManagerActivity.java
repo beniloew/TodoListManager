@@ -12,11 +12,8 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnCreateContextMenuListener;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
 
 
@@ -52,6 +49,7 @@ public class TodoListManagerActivity extends Activity {
 		} else {
 			menu.removeItem(R.id.menuItemCall);
 		}
+		adapter.add(new TodoItem("beni",	 null));
 	}
 	
 	public boolean onContextItemSelected(MenuItem item)
@@ -92,7 +90,6 @@ public class TodoListManagerActivity extends Activity {
 	}
 
 	private void addToList() {
-		EditText edtText = (EditText)findViewById(R.id.edtNewItem);
 		Intent addItem = new Intent(this, AddNewTodoItemActivity.class);
 		startActivityForResult(addItem, ADD_INTENT);
 	}
@@ -101,7 +98,7 @@ public class TodoListManagerActivity extends Activity {
 		switch (reqCode) {
 		case ADD_INTENT: {
 			if (resCode != RESULT_OK) return;
-			String title = (String) data.getSerializableExtra("title");
+			String title = data.getStringExtra("title");
 			Date dueTo = (Date) data.getSerializableExtra("dueDate");
 			adapter.add(new TodoItem(title, dueTo));
 		}
