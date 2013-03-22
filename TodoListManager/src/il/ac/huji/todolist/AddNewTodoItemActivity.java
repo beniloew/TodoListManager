@@ -1,10 +1,14 @@
 package il.ac.huji.todolist;
 
+import java.util.Date;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.view.View.OnClickListener;
 
 public class AddNewTodoItemActivity extends Activity {
@@ -28,8 +32,14 @@ public class AddNewTodoItemActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				
+				EditText titleView = (EditText) findViewById(R.id.edtNewItem);
+				DatePicker dateView = (DatePicker) findViewById(R.id.datePicker);
+				@SuppressWarnings("deprecation")
+				Intent res = new Intent();
+				res.putExtra("dueDate", new Date(dateView.getYear() - 1900, dateView.getMonth(), dateView.getDayOfMonth()));
+				res.putExtra("title", titleView.getText().toString());
+				setResult(RESULT_OK, res);
+				finish();
 			}
 		});
 	}

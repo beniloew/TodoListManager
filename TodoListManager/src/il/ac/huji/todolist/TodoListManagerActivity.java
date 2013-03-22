@@ -1,14 +1,22 @@
 package il.ac.huji.todolist;
 
 import java.util.ArrayList;
+import java.util.Date;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnCreateContextMenuListener;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 
 
@@ -20,15 +28,47 @@ public class TodoListManagerActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_todo_list_manager);
-		adapter = new TodoAdapter(this, R.layout.list_item);
+		adapter = new TodoAdapter(this, R.layout.list_item, new ArrayList<TodoItem>());
 		ListView list = (ListView)findViewById(R.id.lstTodoItems);
 		list.setAdapter(adapter);
+		registerForContextMenu(list);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.todo_list_manager, menu);
+		return true;
+	}
+	
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo info) {
+		super.onCreateContextMenu(menu, v, info);
+		getMenuInflater().inflate(R.menu.delete_ctx_menu, menu);
+		AdapterContextMenuInfo ctxInfo = (AdapterContextMenuInfo) info;
+		String title = adapter.get(ctxInfo.position).getTitle();
+		menu.setHeaderTitle(title);
+		if (title.startsWith("Call ")) {
+			menu.findItem(R.id.menuItemCall).setTitle(title);
+		} else {
+			menu.removeItem(R.id.menuItemCall);
+		}
+	}
+	
+	public boolean onContextItemSelected(MenuItem item)
+	{
+		AdapterContextMenuInfo ctxInfo = (AdapterContextMenuInfo)item.getMenuInfo();
+		switch (item.getItemId())
+		{
+			case R.id.menuItemDelete:
+				adapter.remove(ctxInfo.position);
+				break;
+
+			case R.id.menuItemCall:
+				String callTo = item.getTitle().subSequence(5, item.getTitle().length()).toString();
+				Intent dial = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"+callTo));
+				startActivity(dial);
+				break;
+		}
 		return true;
 	}
 
@@ -55,16 +95,15 @@ public class TodoListManagerActivity extends Activity {
 		EditText edtText = (EditText)findViewById(R.id.edtNewItem);
 		Intent addItem = new Intent(this, AddNewTodoItemActivity.class);
 		startActivityForResult(addItem, ADD_INTENT);
-//		TodoItem item = new TodoItem("beni", null);
-//		adapter.add(item);
 	}
 	
 	protected void onActivityResult(int reqCode, int resCode, Intent data) {
 		switch (reqCode) {
 		case ADD_INTENT: {
 			if (resCode != RESULT_OK) return;
-			TodoItem item = (TodoItem) data.getSerializableExtra("result");
-			adapter.add(item);
+			String title = (String) data.getSerializableExtra("title");
+			Date dueTo = (Date) data.getSerializableExtra("dueDate");
+			adapter.add(new TodoItem(title, dueTo));
 		}
 		}
 	}

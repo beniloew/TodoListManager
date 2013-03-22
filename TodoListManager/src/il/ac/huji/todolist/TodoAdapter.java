@@ -37,7 +37,7 @@ public class TodoAdapter extends ArrayAdapter<TodoItem> {
 	      dueToView.setText(item.getDueToStr());
 	      Date now = new Date();
 	      Date itemDate = item.getDueTo();
-	      if (itemDate != null && now.compareTo(itemDate) > 1) {
+	      if (itemDate != null && now.compareTo(itemDate) > 0) {
 	    	  titleView.setTextColor(Color.RED);
 	    	  dueToView.setTextColor(Color.RED);
 	      }
@@ -53,5 +53,14 @@ public class TodoAdapter extends ArrayAdapter<TodoItem> {
 	public void remove(TodoItem item) {
 		items.remove(item);
 		notifyDataSetChanged();
+	}
+	
+	public void remove(int index) {
+		items.remove(index);
+		notifyDataSetChanged();
+	}
+	
+	public TodoItem get(int i) {
+		return items.get(i);
 	}
 }

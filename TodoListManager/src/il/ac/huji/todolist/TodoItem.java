@@ -1,6 +1,7 @@
 package il.ac.huji.todolist;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class TodoItem implements Comparable<TodoItem>, Serializable{
@@ -23,13 +24,14 @@ public class TodoItem implements Comparable<TodoItem>, Serializable{
 	
 	public String getDueToStr() {
 		if (dueTo == null) return "No due date";
-		return dueTo.toString();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		return sdf.format(dueTo);
 	}
 
 	@Override
 	public int compareTo(TodoItem another) {
 		if (dueTo == null) return 1;
-		return(dueTo.compareTo(another.getDueTo()));
+		return(dueTo.compareTo(another.dueTo));
 	}
 	
 	public boolean equals(TodoItem other) {
