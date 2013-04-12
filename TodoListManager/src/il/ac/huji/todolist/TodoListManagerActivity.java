@@ -20,12 +20,14 @@ import android.widget.ListView;
 public class TodoListManagerActivity extends Activity {
 	public static final int ADD_INTENT = 40531;
 	private TodoAdapter adapter;
+	private TodoDAL dal;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_todo_list_manager);
-		adapter = new TodoAdapter(this, R.layout.list_item, new ArrayList<TodoItem>());
+		dal = new TodoDAL(this);
+		adapter = new TodoAdapter(this, R.layout.list_item, dal.all());
 		ListView list = (ListView)findViewById(R.id.lstTodoItems);
 		list.setAdapter(adapter);
 		registerForContextMenu(list);
@@ -49,7 +51,6 @@ public class TodoListManagerActivity extends Activity {
 		} else {
 			menu.removeItem(R.id.menuItemCall);
 		}
-		adapter.add(new TodoItem("beni",	 null));
 	}
 	
 	public boolean onContextItemSelected(MenuItem item)
@@ -58,6 +59,7 @@ public class TodoListManagerActivity extends Activity {
 		switch (item.getItemId())
 		{
 			case R.id.menuItemDelete:
+				dal.delete(adapter.get(ctxInfo.position));
 				adapter.remove(ctxInfo.position);
 				break;
 
@@ -87,6 +89,7 @@ public class TodoListManagerActivity extends Activity {
 		ListView list = (ListView)findViewById(R.id.lstTodoItems);
 		TodoItem item = (TodoItem)list.getSelectedItem();
 		adapter.remove(item);
+		dal.delete(item);
 	}
 
 	private void addToList() {
@@ -100,8 +103,16 @@ public class TodoListManagerActivity extends Activity {
 			if (resCode != RESULT_OK) return;
 			String title = data.getStringExtra("title");
 			Date dueTo = (Date) data.getSerializableExtra("dueDate");
-			adapter.add(new TodoItem(title, dueTo));
+			TodoItem item = new TodoItem(title, dueTo);
+			adapter.add(item);
+			dal.insert(item);
 		}
 		}
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		dal.closeDB();
 	}
 }
