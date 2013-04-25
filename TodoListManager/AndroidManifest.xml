@@ -9,8 +9,8 @@
         android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -25,10 +25,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity 
-            android:name="il.ac.huji.todolist.AddNewTodoItemActivity" 
+        <activity
+            android:name="il.ac.huji.todolist.AddNewTodoItemActivity"
             android:label="@string/add_new_lbl"
-            android:theme="@android:style/Theme.Dialog">
+            android:theme="@android:style/Theme.Dialog" >
+        </activity>
+        <activity
+            android:name="il.ac.huji.todolist.TwitCheck"
+            android:theme="@style/NoTitleDialog" >
+        </activity>
+        <activity
+            android:name="il.ac.huji.todolist.TweeterAskUser"
+            android:label="@string/title_activity_tweeter_ask_user"
+            android:theme="@android:style/Theme.Dialog" >
+        </activity>
+        <activity
+            android:name="il.ac.huji.todolist.TodoPrefsActivity"
+            android:label="@string/title_activity_todo_prefs"
+            android:parentActivityName="android.preference.PreferenceActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="android.preference.PreferenceActivity" />
         </activity>
     </application>
 

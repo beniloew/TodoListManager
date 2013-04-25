@@ -9,5 +9,13 @@
     <string name="add_new_lbl">Add New Item</string>
     <string name="parseApplication">ElvGbdeFxfwTqVX9HK7v3Ed0NTU0TOoyXfNb1fbg</string>
     <string name="clientKey">ZjJsD1PNIyVpI7svB2ubAKDgnbHVJ50Q2N5NORxu</string>
+    <string name="title_activity_twit_check">Checking new tweets</string>
+    <string name="title_activity_tweeter_ask_user">Tweeter items</string>
+    <string name="TweeterSearchPref">TS</string>
+    <string name="DefaultTweeterSearchVal">todoapp</string>
+    <string name="title_activity_todo_prefs">Preferences</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="Prefs">Preferences</string>
+    <string name="GetTweets">Get tweets</string>
 
 </resources>

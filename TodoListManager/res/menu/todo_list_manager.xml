@@ -1,5 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/menuItemAdd" android:title="@string/add" android:icon="@drawable/add"></item>
-    <item android:id="@+id/menuItemDelete" android:title="@string/del" android:icon="@drawable/delete"></item>
+    <!-- <item android:id="@+id/menuItemDelete" android:title="@string/del" android:icon="@drawable/delete"></item> -->
+    <item android:id="@+id/menuPrefs" android:title="@string/Prefs" android:icon="@drawable/settings"></item>
+    <item android:id="@+id/menuTweets" android:title="@string/GetTweets" android:icon="@drawable/twitter"></item>
 
 </menu>

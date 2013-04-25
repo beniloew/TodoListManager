@@ -3,6 +3,8 @@ package il.ac.huji.todolist;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.json.JSONObject;
 
@@ -24,9 +26,6 @@ public class TodoDAL {
 	
 	private SQLiteDatabase db;
 	public final static String PARSE_CLASS = "todo";
-	public final static String DB_TABLE = "todo";
-	public final static String TITLE = "title";
-	public final static String DUE = "due";
 	
 	
 	public TodoDAL(Context context) {
@@ -48,19 +47,19 @@ public class TodoDAL {
 			ContentValues todoItemCV = new ContentValues();
 			ParseObject todoItemPO = new ParseObject(PARSE_CLASS);
 			
-			todoItemCV.put(TITLE, title);
-			todoItemPO.put(TITLE, title);
+			todoItemCV.put(TodoDBHelper.TITLE, title);
+			todoItemPO.put(TodoDBHelper.TITLE, title);
 			
 			if (dueTo == null) {
-				todoItemCV.putNull(DUE);
-				todoItemPO.put(DUE, JSONObject.NULL);
+				todoItemCV.putNull(TodoDBHelper.DUE);
+				todoItemPO.put(TodoDBHelper.DUE, JSONObject.NULL);
 			} else {
 				long time = dueTo.getTime();
-				todoItemCV.put(DUE, time);
-				todoItemPO.put(DUE, time);
+				todoItemCV.put(TodoDBHelper.DUE, time);
+				todoItemPO.put(TodoDBHelper.DUE, time);
 			}
 			
-			if (db.insert(DB_TABLE, null, todoItemCV) < 0) ret = false;
+			if (db.insert(TodoDBHelper.DB_TABLE, null, todoItemCV) < 0) ret = false;
 			todoItemPO.saveInBackground();
 			
 			return ret;
@@ -70,46 +69,6 @@ public class TodoDAL {
 		}  
 	}
 	
-	public boolean update(ITodoItem todoItem) {
-		try {
-			boolean ret = true;
-			if (todoItem == null) return false;
-			String title = todoItem.getTitle();
-			final Date dueTo = todoItem.getDueDate();
-			if (title == null) return false;
-			
-			ContentValues todoItemCV = new ContentValues();
-			if (dueTo == null) {
-				todoItemCV.putNull(DUE);
-			} else {
-				todoItemCV.put(DUE, dueTo.getTime());
-			}
-			if (db.update(DB_TABLE, todoItemCV , TITLE + "=?", new String[]{title}) < 0) ret = false;
-			
-			ParseQuery query = new ParseQuery(PARSE_CLASS);
-			query.whereEqualTo(TITLE, title);
-			query.findInBackground(new FindCallback() {
-
-				@Override
-				public void done(List<ParseObject> objects, ParseException e) {
-					if (e == null) {
-			            for (ParseObject parseObject : objects) {
-								parseObject.put(DUE, dueTo.getTime());
-								parseObject.saveInBackground();
-						}
-			        } else {
-			            e.printStackTrace();
-			        }
-				}
-			});
-			
-			return ret;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-	
 	public boolean delete(ITodoItem todoItem) {
 		try {
 			boolean ret = true;
@@ -117,10 +76,10 @@ public class TodoDAL {
 			String title = todoItem.getTitle();
 			if (title == null) return false;
 			
-			if (db.delete(DB_TABLE, TITLE + "=?", new String[]{title}) < 0) ret = false;
+			if (db.delete(TodoDBHelper.DB_TABLE, TodoDBHelper.TITLE + "=?", new String[]{title}) < 0) ret = false;
 			
 			ParseQuery query = new ParseQuery(PARSE_CLASS);
-			query.whereEqualTo(TITLE, title);
+			query.whereEqualTo(TodoDBHelper.TITLE, title);
 			query.findInBackground(new FindCallback() {
 
 				@Override
@@ -148,7 +107,8 @@ public class TodoDAL {
 	}
 	
 	public List<ITodoItem> all() {
-		Cursor cursor = db.query(DB_TABLE, new String[] {TITLE, DUE}, null, null, null, null, "case when " + DUE +" is null then 1 else 0 end, " + DUE);
+		Cursor cursor = db.query(TodoDBHelper.DB_TABLE, new String[] {TodoDBHelper.TITLE, TodoDBHelper.DUE}, null, null, null, null,
+					"case when " + TodoDBHelper.DUE +" is null then 1 else 0 end, " + TodoDBHelper.DUE);
 		List<ITodoItem> result = new ArrayList<ITodoItem>();
 		if (cursor.moveToFirst()) {
 			do {
@@ -163,5 +123,23 @@ public class TodoDAL {
 	
 	public void closeDB() {
 		db.close();
+	}
+	
+	public boolean addTweetId(long id) {
+		ContentValues idCV = new ContentValues();
+		idCV.put(TodoDBHelper.TWEET_ID, id);
+		return (db.insert(TodoDBHelper.SEEN_TWTS_TBL, null, idCV) >= 0);
+	}
+	
+	public Set<Long> getSeenTweetsIds() {
+		TreeSet<Long> result = new TreeSet<Long>();
+		Cursor cursor = db.query(TodoDBHelper.SEEN_TWTS_TBL, new String[] {TodoDBHelper.TWEET_ID}, null, null, null, null, null);
+		if (cursor.moveToFirst()) {
+			do {
+				long id = cursor.getLong(0);
+				result.add(id);
+			} while (cursor.moveToNext());
+		}
+		return result; 
 	}
 }
